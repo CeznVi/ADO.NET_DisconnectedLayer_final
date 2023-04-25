@@ -350,12 +350,12 @@ namespace _003_DisconnectedLayer
         {
             try
             {
-                /////________________________SELECT___________________________________
                 DbCommand dbCommandSelect = _dbProviderFactory.CreateCommand();
                 dbCommandSelect.Connection = _dbConnection;
                 dbCommandSelect.CommandText = $"SELECT * FROM {_activeTable}";
 
                 _dataAdapter.SelectCommand = dbCommandSelect;
+                
                 if (dataGridView_Results.Columns.Count > 0 && _activeTable == "users")
                 {
                     dataGridView_Results.Columns[0].ReadOnly = true;
@@ -365,16 +365,21 @@ namespace _003_DisconnectedLayer
                     dataGridView_Results.Columns[0].ReadOnly = true;
                     dataGridView_Results.Columns[1].ReadOnly = true;
                 }
+                
                 _dataAdapter.Fill(_dataSet);
-                /////________________________SELECT-------END___________________________________
-
               
-                /////________________________UPDATE___________________________________
                 DbCommand dbCommandUpdate = _dbProviderFactory.CreateCommand();
                 dbCommandUpdate.Connection = _dbConnection;
 
+                DbCommand dbCommandInsert = _dbProviderFactory.CreateCommand();
+                dbCommandInsert.Connection = _dbConnection;
+
+
                 dbCommandUpdate.CommandText = $"UPDATE {_activeTable} SET ";
-                List<UpdateParam> allParams = new List<UpdateParam>();
+                dbCommandInsert.CommandText = $"INSERT INTO {_activeTable} "; 
+                List<UpdateParam> allParamsUpd = new List<UpdateParam>();
+                //List<UpdateParam> allParamsInsert = new List<UpdateParam>();
+
 
                 UpdateParam idParam = new UpdateParam() { NameCol = "Id", Parameter = dbCommandUpdate.CreateParameter() };
                 idParam.Parameter.DbType = DbType.Int32;
@@ -385,35 +390,48 @@ namespace _003_DisconnectedLayer
                 if (_activeTable == "users")
                 {
                     UpdateParam loginParam = new UpdateParam() { NameCol = "login", Parameter = dbCommandUpdate.CreateParameter() };
+
                     loginParam.Parameter.DbType = DbType.String;
                     loginParam.Parameter.ParameterName = "@login";
                     loginParam.Parameter.SourceColumn = "login";
                     loginParam.Parameter.SourceVersion = DataRowVersion.Current;
-                    allParams.Add(loginParam);
+                    allParamsUpd.Add(loginParam);
 
                     UpdateParam emailParam = new UpdateParam() { NameCol = "email", Parameter = dbCommandUpdate.CreateParameter() };
                     emailParam.Parameter.DbType = DbType.String;
                     emailParam.Parameter.ParameterName = "@email";
                     emailParam.Parameter.SourceColumn = "email";
                     emailParam.Parameter.SourceVersion = DataRowVersion.Current;
-                    allParams.Add(emailParam);
+                    allParamsUpd.Add(emailParam);
 
                     UpdateParam passParam = new UpdateParam() { NameCol = "password", Parameter = dbCommandUpdate.CreateParameter() };
                     passParam.Parameter.DbType = DbType.String;
                     passParam.Parameter.ParameterName = "@password";
                     passParam.Parameter.SourceColumn = "password";
                     passParam.Parameter.SourceVersion = DataRowVersion.Current;
-                    allParams.Add(passParam);
+                    allParamsUpd.Add(passParam);
 
-                    foreach (var item in allParams)
+                    dbCommandInsert.CommandText += "(login, email, password) VALUES (";
+
+                    foreach (var item in allParamsUpd)
                     {
                         dbCommandUpdate.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
+                        //upd
                         dbCommandUpdate.Parameters.Add(item.Parameter);
+                        //isert
+                        dbCommandInsert.CommandText += $"{item.Parameter.SourceColumn}, ";
+                        dbCommandInsert.Parameters.Add(item.Parameter);
                     }
 
+                    //upd
                     dbCommandUpdate.CommandText = dbCommandUpdate.CommandText.Substring(0, dbCommandUpdate.CommandText.Length - 2);
                     dbCommandUpdate.CommandText += $" WHERE {idParam.NameCol} = {idParam.Parameter.ParameterName}";
                     dbCommandUpdate.Parameters.Add(idParam.Parameter);
+                    //ins
+                    dbCommandInsert.CommandText = dbCommandInsert.CommandText.Substring(0, dbCommandInsert.CommandText.Length - 2);
+                    dbCommandInsert.CommandText += $")";
+                    
+
                 }
                 else if(_activeTable == "usersInfo")
                 {
@@ -422,18 +440,30 @@ namespace _003_DisconnectedLayer
                     fioParam.Parameter.ParameterName = "@fio";
                     fioParam.Parameter.SourceColumn = "fio";
                     fioParam.Parameter.SourceVersion = DataRowVersion.Current;
-                    allParams.Add(fioParam);
+                    allParamsUpd.Add(fioParam);
 
                     UpdateParam innParam = new UpdateParam() { NameCol = "inn", Parameter = dbCommandUpdate.CreateParameter() };
                     innParam.Parameter.DbType = DbType.String;
                     innParam.Parameter.ParameterName = "@inn";
                     innParam.Parameter.SourceColumn = "inn";
                     innParam.Parameter.SourceVersion = DataRowVersion.Current;
-                    allParams.Add(innParam);
+                    allParamsUpd.Add(innParam);
 
+                    UpdateParam bdayParam = new UpdateParam() { NameCol = "birthDate", Parameter = dbCommandUpdate.CreateParameter() };
+                    bdayParam.Parameter.DbType = DbType.DateTime;
+                    bdayParam.Parameter.ParameterName = "@birthDate";
+                    bdayParam.Parameter.SourceColumn = "birthDate";
+                    bdayParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParamsUpd.Add(bdayParam);
 
+                    UpdateParam genderParam = new UpdateParam() { NameCol = "gender", Parameter = dbCommandUpdate.CreateParameter() };
+                    genderParam.Parameter.DbType = DbType.String;
+                    genderParam.Parameter.ParameterName = "@gender";
+                    genderParam.Parameter.SourceColumn = "gender";
+                    genderParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParamsUpd.Add(genderParam);
 
-                    foreach (var item in allParams)
+                    foreach (var item in allParamsUpd)
                     {
                         dbCommandUpdate.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
                         dbCommandUpdate.Parameters.Add(item.Parameter);
@@ -444,12 +474,6 @@ namespace _003_DisconnectedLayer
                     dbCommandUpdate.Parameters.Add(idParam.Parameter);
 
                 }
-
-
-
-
-
-
 
                 ///////________________________UPDATE-------END___________________________________
 
@@ -500,7 +524,7 @@ namespace _003_DisconnectedLayer
 
                 _dataAdapter.SelectCommand = dbCommandSelect;
                 _dataAdapter.UpdateCommand = dbCommandUpdate;
-                //_dataAdapter.InsertCommand = dbCommandInsert;
+                _dataAdapter.InsertCommand = dbCommandInsert;
                 //_dataAdapter.DeleteCommand = dbCommandDelete;
 
 
