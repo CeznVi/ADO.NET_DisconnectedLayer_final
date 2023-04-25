@@ -68,7 +68,7 @@
             this.button_Execute.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button_Execute.Location = new System.Drawing.Point(684, 103);
             this.button_Execute.Name = "button_Execute";
-            this.button_Execute.Size = new System.Drawing.Size(135, 63);
+            this.button_Execute.Size = new System.Drawing.Size(135, 43);
             this.button_Execute.TabIndex = 2;
             this.button_Execute.Text = "Fill DataTable";
             this.button_Execute.UseVisualStyleBackColor = true;
@@ -77,9 +77,9 @@
             // button_ExecDataSet
             // 
             this.button_ExecDataSet.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button_ExecDataSet.Location = new System.Drawing.Point(684, 172);
+            this.button_ExecDataSet.Location = new System.Drawing.Point(684, 152);
             this.button_ExecDataSet.Name = "button_ExecDataSet";
-            this.button_ExecDataSet.Size = new System.Drawing.Size(135, 64);
+            this.button_ExecDataSet.Size = new System.Drawing.Size(135, 43);
             this.button_ExecDataSet.TabIndex = 3;
             this.button_ExecDataSet.Text = "Fill DataSet";
             this.button_ExecDataSet.UseVisualStyleBackColor = true;
@@ -87,6 +87,7 @@
             // 
             // comboBox_selectDB
             // 
+            this.comboBox_selectDB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_selectDB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.comboBox_selectDB.FormattingEnabled = true;
             this.comboBox_selectDB.Location = new System.Drawing.Point(684, 13);
@@ -94,29 +95,30 @@
             this.comboBox_selectDB.Size = new System.Drawing.Size(135, 28);
             this.comboBox_selectDB.Sorted = true;
             this.comboBox_selectDB.TabIndex = 4;
-            this.comboBox_selectDB.Text = "Select table";
             this.comboBox_selectDB.SelectedIndexChanged += new System.EventHandler(this.comboBox_selectDB_SelectedIndexChanged);
             // 
             // button_Update
             // 
-            this.button_Update.Location = new System.Drawing.Point(684, 243);
+            this.button_Update.BackColor = System.Drawing.SystemColors.Control;
+            this.button_Update.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.button_Update.Location = new System.Drawing.Point(683, 201);
             this.button_Update.Name = "button_Update";
             this.button_Update.Size = new System.Drawing.Size(135, 43);
             this.button_Update.TabIndex = 5;
             this.button_Update.Text = "Update";
-            this.button_Update.UseVisualStyleBackColor = true;
+            this.button_Update.UseVisualStyleBackColor = false;
             this.button_Update.Click += new System.EventHandler(this.button_Update_Click);
             // 
             // textBox_Filter
             // 
-            this.textBox_Filter.Location = new System.Drawing.Point(684, 293);
+            this.textBox_Filter.Location = new System.Drawing.Point(683, 303);
             this.textBox_Filter.Name = "textBox_Filter";
             this.textBox_Filter.Size = new System.Drawing.Size(135, 20);
             this.textBox_Filter.TabIndex = 6;
             // 
             // button_filterExec
             // 
-            this.button_filterExec.Location = new System.Drawing.Point(684, 320);
+            this.button_filterExec.Location = new System.Drawing.Point(683, 329);
             this.button_filterExec.Name = "button_filterExec";
             this.button_filterExec.Size = new System.Drawing.Size(135, 31);
             this.button_filterExec.TabIndex = 7;
@@ -126,14 +128,14 @@
             // 
             // textBox_Sort
             // 
-            this.textBox_Sort.Location = new System.Drawing.Point(684, 357);
+            this.textBox_Sort.Location = new System.Drawing.Point(683, 381);
             this.textBox_Sort.Name = "textBox_Sort";
             this.textBox_Sort.Size = new System.Drawing.Size(135, 20);
             this.textBox_Sort.TabIndex = 8;
             // 
             // button_SortExec
             // 
-            this.button_SortExec.Location = new System.Drawing.Point(684, 388);
+            this.button_SortExec.Location = new System.Drawing.Point(683, 407);
             this.button_SortExec.Name = "button_SortExec";
             this.button_SortExec.Size = new System.Drawing.Size(135, 31);
             this.button_SortExec.TabIndex = 9;
