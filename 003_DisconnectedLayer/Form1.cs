@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _003_DisconnectedLayer.Parametr;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -349,43 +350,108 @@ namespace _003_DisconnectedLayer
         {
             try
             {
-
-                /////________________________SELECT
+                /////________________________SELECT___________________________________
                 DbCommand dbCommandSelect = _dbProviderFactory.CreateCommand();
                 dbCommandSelect.Connection = _dbConnection;
                 dbCommandSelect.CommandText = $"SELECT * FROM {_activeTable}";
 
                 _dataAdapter.SelectCommand = dbCommandSelect;
-                if (dataGridView_Results.Columns.Count > 0)
+                if (dataGridView_Results.Columns.Count > 0 && _activeTable == "users")
                 {
                     dataGridView_Results.Columns[0].ReadOnly = true;
                 }
+                else if (dataGridView_Results.Columns.Count > 0 && _activeTable == "usersInfo")
+                {
+                    dataGridView_Results.Columns[0].ReadOnly = true;
+                    dataGridView_Results.Columns[1].ReadOnly = true;
+                }
                 _dataAdapter.Fill(_dataSet);
-                /////________________________SELECT-------END
+                /////________________________SELECT-------END___________________________________
+
+              
+                /////________________________UPDATE___________________________________
+                DbCommand dbCommandUpdate = _dbProviderFactory.CreateCommand();
+                dbCommandUpdate.Connection = _dbConnection;
+
+                dbCommandUpdate.CommandText = $"UPDATE {_activeTable} SET ";
+                List<UpdateParam> allParams = new List<UpdateParam>();
+
+                UpdateParam idParam = new UpdateParam() { NameCol = "Id", Parameter = dbCommandUpdate.CreateParameter() };
+                idParam.Parameter.DbType = DbType.Int32;
+                idParam.Parameter.ParameterName = "@Id";
+                idParam.Parameter.SourceColumn = "Id";
+                idParam.Parameter.SourceVersion = DataRowVersion.Original;
+
+                if (_activeTable == "users")
+                {
+                    UpdateParam loginParam = new UpdateParam() { NameCol = "login", Parameter = dbCommandUpdate.CreateParameter() };
+                    loginParam.Parameter.DbType = DbType.String;
+                    loginParam.Parameter.ParameterName = "@login";
+                    loginParam.Parameter.SourceColumn = "login";
+                    loginParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParams.Add(loginParam);
+
+                    UpdateParam emailParam = new UpdateParam() { NameCol = "email", Parameter = dbCommandUpdate.CreateParameter() };
+                    emailParam.Parameter.DbType = DbType.String;
+                    emailParam.Parameter.ParameterName = "@email";
+                    emailParam.Parameter.SourceColumn = "email";
+                    emailParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParams.Add(emailParam);
+
+                    UpdateParam passParam = new UpdateParam() { NameCol = "password", Parameter = dbCommandUpdate.CreateParameter() };
+                    passParam.Parameter.DbType = DbType.String;
+                    passParam.Parameter.ParameterName = "@password";
+                    passParam.Parameter.SourceColumn = "password";
+                    passParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParams.Add(passParam);
+
+                    foreach (var item in allParams)
+                    {
+                        dbCommandUpdate.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
+                        dbCommandUpdate.Parameters.Add(item.Parameter);
+                    }
+
+                    dbCommandUpdate.CommandText = dbCommandUpdate.CommandText.Substring(0, dbCommandUpdate.CommandText.Length - 2);
+                    dbCommandUpdate.CommandText += $" WHERE {idParam.NameCol} = {idParam.Parameter.ParameterName}";
+                    dbCommandUpdate.Parameters.Add(idParam.Parameter);
+                }
+                else if(_activeTable == "usersInfo")
+                {
+                    UpdateParam fioParam = new UpdateParam() { NameCol = "fio", Parameter = dbCommandUpdate.CreateParameter() };
+                    fioParam.Parameter.DbType = DbType.String;
+                    fioParam.Parameter.ParameterName = "@fio";
+                    fioParam.Parameter.SourceColumn = "fio";
+                    fioParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParams.Add(fioParam);
+
+                    UpdateParam innParam = new UpdateParam() { NameCol = "inn", Parameter = dbCommandUpdate.CreateParameter() };
+                    innParam.Parameter.DbType = DbType.String;
+                    innParam.Parameter.ParameterName = "@inn";
+                    innParam.Parameter.SourceColumn = "inn";
+                    innParam.Parameter.SourceVersion = DataRowVersion.Current;
+                    allParams.Add(innParam);
 
 
-                /////________________________UPDATE
-                //DbCommand dbCommandUpdate = _dbProviderFactory.CreateCommand();
-                //dbCommandUpdate.Connection = _dbConnection;
 
-                //dbCommandUpdate.CommandText = "UPDATE users SET password = @password WHERE Id = @Id";
+                    foreach (var item in allParams)
+                    {
+                        dbCommandUpdate.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
+                        dbCommandUpdate.Parameters.Add(item.Parameter);
+                    }
 
-                //DbParameter dbPasswordUpdateParametr = dbCommandUpdate.CreateParameter();
-                //dbPasswordUpdateParametr.DbType = DbType.String;
-                //dbPasswordUpdateParametr.ParameterName = "@password";
-                //dbPasswordUpdateParametr.SourceColumn = "password";
-                //dbPasswordUpdateParametr.SourceVersion = DataRowVersion.Current;
-                //dbCommandUpdate.Parameters.Add(dbPasswordUpdateParametr);
+                    dbCommandUpdate.CommandText = dbCommandUpdate.CommandText.Substring(0, dbCommandUpdate.CommandText.Length - 2);
+                    dbCommandUpdate.CommandText += $" WHERE {idParam.NameCol} = {idParam.Parameter.ParameterName}";
+                    dbCommandUpdate.Parameters.Add(idParam.Parameter);
 
-                //DbParameter dbIdUpdateParametr = dbCommandUpdate.CreateParameter();
-                //dbIdUpdateParametr.DbType = DbType.Int32;
-                //dbIdUpdateParametr.ParameterName = "@Id";
-                //dbIdUpdateParametr.SourceColumn = "Id";
-                //dbIdUpdateParametr.SourceVersion = DataRowVersion.Original;
-                //dbCommandUpdate.Parameters.Add(dbIdUpdateParametr);
+                }
 
 
-                ///////________________________UPDATE-------END
+
+
+
+
+
+                ///////________________________UPDATE-------END___________________________________
 
                 ///////________________________INSERT
                 //DbCommand dbCommandInsert = _dbProviderFactory.CreateCommand();
@@ -433,10 +499,11 @@ namespace _003_DisconnectedLayer
 
 
                 _dataAdapter.SelectCommand = dbCommandSelect;
+                _dataAdapter.UpdateCommand = dbCommandUpdate;
                 //_dataAdapter.InsertCommand = dbCommandInsert;
                 //_dataAdapter.DeleteCommand = dbCommandDelete;
-                //_dataAdapter.UpdateCommand = dbCommandUpdate;
-                
+
+
                 _dataAdapter.Update(_dataSet);
                 
                 ///Было клир
