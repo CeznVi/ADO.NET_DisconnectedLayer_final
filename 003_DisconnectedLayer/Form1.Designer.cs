@@ -41,8 +41,12 @@
             this.button_filterExec = new System.Windows.Forms.Button();
             this.textBox_Sort = new System.Windows.Forms.TextBox();
             this.button_SortExec = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Results)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox_Query
@@ -62,6 +66,9 @@
             this.dataGridView_Results.Name = "dataGridView_Results";
             this.dataGridView_Results.Size = new System.Drawing.Size(664, 335);
             this.dataGridView_Results.TabIndex = 1;
+            this.dataGridView_Results.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_Results_CellValueChanged);
+            this.dataGridView_Results.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_Results_UserAddedRow);
+            this.dataGridView_Results.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_Results_UserDeletedRow);
             // 
             // button_Execute
             // 
@@ -143,11 +150,33 @@
             this.button_SortExec.UseVisualStyleBackColor = true;
             this.button_SortExec.Click += new System.EventHandler(this.button_SortExec_Click);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel,
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 439);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(822, 22);
+            this.statusStrip1.TabIndex = 10;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 450);
+            this.ClientSize = new System.Drawing.Size(822, 461);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button_SortExec);
             this.Controls.Add(this.textBox_Sort);
             this.Controls.Add(this.button_filterExec);
@@ -165,6 +194,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_Results)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -183,6 +214,9 @@
         private System.Windows.Forms.Button button_filterExec;
         private System.Windows.Forms.TextBox textBox_Sort;
         private System.Windows.Forms.Button button_SortExec;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 

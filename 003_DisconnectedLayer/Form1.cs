@@ -29,6 +29,9 @@ namespace _003_DisconnectedLayer
         private DataTable _dataTable;
         private DataSet _dataSet;
 
+        private int _rowCount;
+        private int _cellCount;
+
         public Form1()
         {
             InitializeComponent();
@@ -212,7 +215,6 @@ namespace _003_DisconnectedLayer
             }
         }
 
-
         private void comboBox_selectDB_SelectedIndexChanged(object sender, EventArgs e)
         {
             dataGridView_Results.DataSource = null;
@@ -221,6 +223,9 @@ namespace _003_DisconnectedLayer
             ////Активация кнопки Апдейт
             button_Update.Enabled = true;
             button_Update.BackColor = Color.PaleGreen;
+
+            ///заполнение поля
+            textBox_Query.Text = $"SELECT * FROM {_activeTable}";
         }
 
         /// <summary>
@@ -367,6 +372,8 @@ namespace _003_DisconnectedLayer
         {
             try
             {
+                _cellCount = 0;
+                textBox_Query.Text = "";
                 DbCommand dbCommandSelect = GetDbCommand("Select");
                 _dataAdapter.SelectCommand = dbCommandSelect;
                 
@@ -386,11 +393,13 @@ namespace _003_DisconnectedLayer
                 _dataAdapter.DeleteCommand = dbCommandDelete;
 
                 _dataAdapter.Update(_dataSet);
-                
+
                 _dataSet.Reset();
                 _dataAdapter.Fill(_dataSet);
+
                 dataGridView_Results.DataSource = _dataSet.Tables[0];
-                
+                _rowCount = dataGridView_Results.Rows.Count;
+                toolStripStatusLabel.Text = "All changes are saved";
             }
             catch (Exception ex)
             {
@@ -403,7 +412,6 @@ namespace _003_DisconnectedLayer
 
 
         }
-
 
         private void button_filterExec_Click(object sender, EventArgs e)
         {
@@ -448,6 +456,23 @@ namespace _003_DisconnectedLayer
             DataView dataViewSorted = dataViewManager.CreateDataView(_dataSet.Tables[0]);
 
             dataGridView_Results.DataSource = dataViewSorted;
+        }
+
+        private void dataGridView_Results_UserAddedRow(object sender, DataGridViewRowEventArgs e)
+        {
+           toolStripStatusLabel.Text = $"Add rows : { dataGridView_Results.Rows.Count - _rowCount}";
+        }
+
+        private void dataGridView_Results_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            toolStripStatusLabel.Text = $"Delete rows : {_rowCount - dataGridView_Results.Rows.Count}";
+        }
+
+        private void dataGridView_Results_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            _cellCount++;
+            toolStripStatusLabel.Text = $"Changed cells: {_cellCount}";
+
         }
     }
 }
