@@ -110,11 +110,6 @@ namespace _003_DisconnectedLayer
             }
         }
 
-        /// <summary>
-        /// ?????? какая задумка тут была не понятно..
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void button_ExecDataSet_Click(object sender, EventArgs e)
         {
             try
@@ -152,7 +147,6 @@ namespace _003_DisconnectedLayer
                 _dbConnection.Close();
             }
         }
-
 
         private void GetTableNameIntoCombobox()
         {
@@ -229,126 +223,11 @@ namespace _003_DisconnectedLayer
             button_Update.BackColor = Color.PaleGreen;
         }
 
-
         /// <summary>
-        /// OLD VERSION
+        /// Метод формирует ДБкоманду  в зависимости от команды и типа выбраной таблицы
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void button_Update_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        /////________________________SELECT
-
-        //        DbCommand dbCommandSelect = _dbProviderFactory.CreateCommand();
-        //        dbCommandSelect.Connection = _dbConnection;
-
-        //        dbCommandSelect.CommandText = "SELECT * FROM users";
-
-        //        _dataAdapter.SelectCommand = dbCommandSelect;
-        //        if(dataGridView_Results.Columns.Count > 0 ) 
-        //        {
-        //            dataGridView_Results.Columns[0].ReadOnly = true;
-        //        }
-        //        _dataAdapter.Fill(_dataSet);
-        //        /////________________________SELECT-------END
-
-
-        //        /////________________________UPDATE
-        //        DbCommand dbCommandUpdate = _dbProviderFactory.CreateCommand();
-        //        dbCommandUpdate.Connection = _dbConnection;
-
-        //        dbCommandUpdate.CommandText = "UPDATE users SET password = @password WHERE Id = @Id";
-
-        //        DbParameter dbPasswordUpdateParametr = dbCommandUpdate.CreateParameter();
-        //        dbPasswordUpdateParametr.DbType = DbType.String;
-        //        dbPasswordUpdateParametr.ParameterName = "@password";
-        //        dbPasswordUpdateParametr.SourceColumn = "password";
-        //        dbPasswordUpdateParametr.SourceVersion = DataRowVersion.Current;
-        //        dbCommandUpdate.Parameters.Add(dbPasswordUpdateParametr);
-
-        //        DbParameter dbIdUpdateParametr = dbCommandUpdate.CreateParameter();
-        //        dbIdUpdateParametr.DbType = DbType.Int32;
-        //        dbIdUpdateParametr.ParameterName = "@Id";
-        //        dbIdUpdateParametr.SourceColumn = "Id";
-        //        dbIdUpdateParametr.SourceVersion = DataRowVersion.Original;
-        //        dbCommandUpdate.Parameters.Add(dbIdUpdateParametr);
-
-
-        //        /////________________________UPDATE-------END
-
-        //        /////________________________INSERT
-        //        DbCommand dbCommandInsert = _dbProviderFactory.CreateCommand();
-        //        dbCommandInsert.Connection = _dbConnection;
-        //        dbCommandInsert.CommandText = "INSERT INTO users (login, email, password) VALUES (@log, @em, @pas)";
-
-
-        //        DbParameter dbLoginInsertParametr = dbCommandInsert.CreateParameter();
-        //        dbLoginInsertParametr.DbType= DbType.String;
-        //        dbLoginInsertParametr.ParameterName = "@log";
-        //        dbLoginInsertParametr.SourceColumn = "login";
-        //        dbLoginInsertParametr.SourceVersion = DataRowVersion.Current;
-        //        dbCommandInsert.Parameters.Add(dbLoginInsertParametr);
-
-        //        DbParameter dbEmailInsertParametr = dbCommandInsert.CreateParameter();
-        //        dbEmailInsertParametr.DbType = DbType.String;
-        //        dbEmailInsertParametr.ParameterName = "@em";
-        //        dbEmailInsertParametr.SourceColumn = "email";
-        //        dbEmailInsertParametr.SourceVersion = DataRowVersion.Current;
-        //        dbCommandInsert.Parameters.Add(dbEmailInsertParametr);
-
-        //        DbParameter dbPassInsertParametr = dbCommandInsert.CreateParameter();
-        //        dbPassInsertParametr.DbType = DbType.String;
-        //        dbPassInsertParametr.ParameterName = "@pas";
-        //        dbPassInsertParametr.SourceColumn = "password";
-        //        dbPassInsertParametr.SourceVersion = DataRowVersion.Current;
-        //        dbCommandInsert.Parameters.Add(dbPassInsertParametr);
-        //        /////________________________INSERT-------END
-
-
-        //        /////________________________DELETE
-        //        DbCommand dbCommandDelete = _dbProviderFactory.CreateCommand();
-        //        dbCommandDelete.Connection = _dbConnection;
-
-        //        dbCommandDelete.CommandText = "DELETE FROM users WHERE Id = @Id";
-
-        //        DbParameter dbIdDeleteParametr = dbCommandDelete.CreateParameter();
-        //        dbIdDeleteParametr.DbType = DbType.Int32;
-        //        dbIdDeleteParametr.ParameterName = "@Id";
-        //        dbIdDeleteParametr.SourceColumn = "Id";
-        //        dbIdDeleteParametr.SourceVersion = DataRowVersion.Original;
-        //        dbCommandDelete.Parameters.Add(dbIdDeleteParametr);
-
-        //        /////________________________DELETE-------END
-
-
-        //        _dataAdapter.SelectCommand = dbCommandSelect;
-        //        _dataAdapter.InsertCommand = dbCommandInsert;
-        //        _dataAdapter.DeleteCommand = dbCommandDelete;
-
-        //        _dataAdapter.UpdateCommand = dbCommandUpdate;
-        //        _dataAdapter.Update(_dataSet);
-        //        _dataSet.Clear();
-
-        //        _dataAdapter.Fill(_dataSet);
-        //        dataGridView_Results.DataSource = _dataSet.Tables[0];
-        //    }
-        //    catch (Exception ex )
-        //    {
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //    finally 
-        //    { 
-        //        _dbConnection.Close(); 
-        //    }
-
-
-        //}
-        ///
-
-
-
+        /// <param name="comandType">Ins, Upd, Del</param>
+        /// <returns></returns>
         private DbCommand GetDbCommand(string comandType)
         {
             DbCommand dbCommand = _dbProviderFactory.CreateCommand();
@@ -363,6 +242,15 @@ namespace _003_DisconnectedLayer
             else if(comandType == "Ins")
             {
                 dbCommand.CommandText = $"INSERT INTO {_activeTable} ";
+            }
+            else if (comandType == "Del")
+            {
+                dbCommand.CommandText = $"DELETE FROM {_activeTable} WHERE Id = @Id";
+            }
+            else if(comandType == "Select")
+            {
+                dbCommand.CommandText = $"SELECT * FROM {_activeTable}";
+                return dbCommand;
             }
 
 
@@ -402,31 +290,21 @@ namespace _003_DisconnectedLayer
                 passParam.Parameter.SourceVersion = DataRowVersion.Current;
                 allParamsUpd.Add(passParam);
 
-                if(comandType == "Upd")
-                {
-                    foreach (var item in allParamsUpd)
-                    {
-                        dbCommand.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
-                        dbCommand.Parameters.Add(item.Parameter);
-                    }
-                    dbCommand.CommandText = dbCommand.CommandText.Substring(0, dbCommand.CommandText.Length - 2);
-                    dbCommand.CommandText += $" WHERE {idParam.NameCol} = {idParam.Parameter.ParameterName}";
-                    dbCommand.Parameters.Add(idParam.Parameter);
-                }
-                else if (comandType == "Ins")
-                {
-                    foreach (var item in allParamsUpd)
-                    {
-                        dbCommand.CommandText += $"{item.Parameter.ParameterName}, ";
-                        dbCommand.Parameters.Add(item.Parameter);
-                    }
-                    dbCommand.CommandText = dbCommand.CommandText.Substring(0, dbCommand.CommandText.Length - 2);
-                    dbCommand.CommandText += $")";
-                }
-
             }
             else if (_activeTable == "usersInfo")
             {
+                if (comandType == "Ins")
+                {
+                    dbCommand.CommandText += "(userId, fio, inn, birthDate, gender) VALUES (";
+                }
+
+                UpdateParam userIdParam = new UpdateParam() { NameCol = "userId", Parameter = dbCommand.CreateParameter() };
+                userIdParam.Parameter.DbType = DbType.Int32;
+                userIdParam.Parameter.ParameterName = "@userId";
+                userIdParam.Parameter.SourceColumn = "userId";
+                userIdParam.Parameter.SourceVersion = DataRowVersion.Current;
+                allParamsUpd.Add(userIdParam);
+
                 UpdateParam fioParam = new UpdateParam() { NameCol = "fio", Parameter = dbCommand.CreateParameter() };
                 fioParam.Parameter.DbType = DbType.String;
                 fioParam.Parameter.ParameterName = "@fio";
@@ -454,104 +332,61 @@ namespace _003_DisconnectedLayer
                 genderParam.Parameter.SourceColumn = "gender";
                 genderParam.Parameter.SourceVersion = DataRowVersion.Current;
                 allParamsUpd.Add(genderParam);
+            }
 
+            if (comandType == "Upd")
+            {
                 foreach (var item in allParamsUpd)
                 {
                     dbCommand.CommandText += $"{item.NameCol} = {item.Parameter.ParameterName}, ";
                     dbCommand.Parameters.Add(item.Parameter);
                 }
-
                 dbCommand.CommandText = dbCommand.CommandText.Substring(0, dbCommand.CommandText.Length - 2);
                 dbCommand.CommandText += $" WHERE {idParam.NameCol} = {idParam.Parameter.ParameterName}";
                 dbCommand.Parameters.Add(idParam.Parameter);
             }
-
+            else if (comandType == "Ins")
+            {
+                foreach (var item in allParamsUpd)
+                {
+                    dbCommand.CommandText += $"{item.Parameter.ParameterName}, ";
+                    dbCommand.Parameters.Add(item.Parameter);
+                }
+                dbCommand.CommandText = dbCommand.CommandText.Substring(0, dbCommand.CommandText.Length - 2);
+                dbCommand.CommandText += $")";
+            }
+            else if (comandType == "Del")
+            {
+                dbCommand.Parameters.Add(idParam.Parameter);
+            }
 
             return dbCommand;
         }
-
 
         private void button_Update_Click(object sender, EventArgs e)
         {
             try
             {
-                DbCommand dbCommandSelect = _dbProviderFactory.CreateCommand();
-                dbCommandSelect.Connection = _dbConnection;
-                dbCommandSelect.CommandText = $"SELECT * FROM {_activeTable}";
-
+                DbCommand dbCommandSelect = GetDbCommand("Select");
                 _dataAdapter.SelectCommand = dbCommandSelect;
                 
-                if (dataGridView_Results.Columns.Count > 0 && _activeTable == "users")
+                if (dataGridView_Results.Columns.Count > 0)
                 {
                     dataGridView_Results.Columns[0].ReadOnly = true;
                 }
-                else if (dataGridView_Results.Columns.Count > 0 && _activeTable == "usersInfo")
-                {
-                    dataGridView_Results.Columns[0].ReadOnly = true;
-                    dataGridView_Results.Columns[1].ReadOnly = true;
-                }
-                
+
                 _dataAdapter.Fill(_dataSet);
               
                 DbCommand dbCommandUpdate = GetDbCommand("Upd");
                 DbCommand dbCommandInsert = GetDbCommand("Ins");
+                DbCommand dbCommandDelete = GetDbCommand("Del");
 
-
-                ///////________________________INSERT
-                //DbCommand dbCommandInsert = _dbProviderFactory.CreateCommand();
-                //dbCommandInsert.Connection = _dbConnection;
-                //dbCommandInsert.CommandText = "INSERT INTO users (login, email, password) VALUES (@log, @em, @pas)";
-
-
-                //DbParameter dbLoginInsertParametr = dbCommandInsert.CreateParameter();
-                //dbLoginInsertParametr.DbType = DbType.String;
-                //dbLoginInsertParametr.ParameterName = "@log";
-                //dbLoginInsertParametr.SourceColumn = "login";
-                //dbLoginInsertParametr.SourceVersion = DataRowVersion.Current;
-                //dbCommandInsert.Parameters.Add(dbLoginInsertParametr);
-
-                //DbParameter dbEmailInsertParametr = dbCommandInsert.CreateParameter();
-                //dbEmailInsertParametr.DbType = DbType.String;
-                //dbEmailInsertParametr.ParameterName = "@em";
-                //dbEmailInsertParametr.SourceColumn = "email";
-                //dbEmailInsertParametr.SourceVersion = DataRowVersion.Current;
-                //dbCommandInsert.Parameters.Add(dbEmailInsertParametr);
-
-                //DbParameter dbPassInsertParametr = dbCommandInsert.CreateParameter();
-                //dbPassInsertParametr.DbType = DbType.String;
-                //dbPassInsertParametr.ParameterName = "@pas";
-                //dbPassInsertParametr.SourceColumn = "password";
-                //dbPassInsertParametr.SourceVersion = DataRowVersion.Current;
-                //dbCommandInsert.Parameters.Add(dbPassInsertParametr);
-                ///////________________________INSERT-------END
-
-
-                ///////________________________DELETE
-                //DbCommand dbCommandDelete = _dbProviderFactory.CreateCommand();
-                //dbCommandDelete.Connection = _dbConnection;
-
-                //dbCommandDelete.CommandText = "DELETE FROM users WHERE Id = @Id";
-
-                //DbParameter dbIdDeleteParametr = dbCommandDelete.CreateParameter();
-                //dbIdDeleteParametr.DbType = DbType.Int32;
-                //dbIdDeleteParametr.ParameterName = "@Id";
-                //dbIdDeleteParametr.SourceColumn = "Id";
-                //dbIdDeleteParametr.SourceVersion = DataRowVersion.Original;
-                //dbCommandDelete.Parameters.Add(dbIdDeleteParametr);
-
-                /////________________________DELETE-------END
-
-
-                _dataAdapter.SelectCommand = dbCommandSelect;
                 _dataAdapter.UpdateCommand = dbCommandUpdate;
                 _dataAdapter.InsertCommand = dbCommandInsert;
-                //_dataAdapter.DeleteCommand = dbCommandDelete;
-
+                _dataAdapter.DeleteCommand = dbCommandDelete;
 
                 _dataAdapter.Update(_dataSet);
                 
-                ///Было клир
-                //_dataSet.Clear();
                 _dataSet.Reset();
                 _dataAdapter.Fill(_dataSet);
                 dataGridView_Results.DataSource = _dataSet.Tables[0];
